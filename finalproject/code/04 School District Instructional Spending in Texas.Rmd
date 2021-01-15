@@ -3,60 +3,29 @@ title: "04School District Spending in Texas Schools"
 author: "Adam Billen"
 date: "1/11/2021"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-install.packages("knitr")
-install.packages("markdown")
-install.packages("rmarkdown")
-install.packages("ggforce")
-install.packages("hexbin")
+```{r message=FALSE}
 library(ggforce)
 library(haven)
-library(ggplot)
 library(ggplot2)
 library(dplyr)
 library(hexbin)
 library(RColorBrewer)
 library(tidyverse)
+```
 
-#testing
-
-
-mydata <- school_district_1_
 
 ```{r}
 
-mydata <- school_district_1_
-
-# hexbin to look into dense cluster
-a=hexbin(mydata$pbstud,mydata$instpup,xbins=40)
-plot(a)
+mydata <- read_dta("\\Users\\adamb\\Documents\\SpendingSD\\finalproject\\code\\school_district (1).dta")
 
 ggplot(data = mydata) +
   geom_point(mapping = aes(x = pbstud, y = instpup),
@@ -123,184 +92,36 @@ barplot(H,names.arg=M,
 
 # PBSTUD summary
 summary(mydata$pbstud)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-#    0.0     1.0     3.0    10.1    12.0   100.0      85 
 
 # instpup predicted by pbstud regression
 lm(formula = pbstud ~ instpup, data = mydata)
   mod <- lm(pbstud ~ instpup, data = mydata)
   summary(mod)
-#Residuals:
-#    Min      1Q  Median      3Q     Max 
-#-14.066  -9.032  -6.304   1.770  88.175 
-#Coefficients:
-#              Estimate Std. Error t value Pr(>|t|)    
-#(Intercept) 17.3257384  1.7781305   9.744  < 2e-16 ***
-#instpup     -0.0012849  0.0002998  -4.285 1.97e-05 ***
-
-
   
 # PHSTUD summary
 summary(mydata$phstud)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-#   0.00   15.00   31.50   38.42   56.00  100.00      85 
 
 # instpup predicted by phstud summary
 lm(formula = phstud ~ instpup, data = mydata)
   mod <- lm(phstud ~ instpup, data = mydata)
   summary(mod)
-# Residuals:
-#     Min      1Q  Median      3Q     Max 
-# -38.169 -23.191  -6.769  17.666  61.738 
-# Coefficients:
-#              Estimate Std. Error t value Pr(>|t|)    
-# (Intercept) 3.697e+01  3.031e+00  12.197   <2e-16 ***
-# instpup     2.488e-04  5.111e-04   0.487    0.626 
-
-  
 
 # PWSTUD summary      
 summary(mydata$pWstud)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-#   0.00   23.75   51.00   48.19   73.25   97.00      85 
 
 #instpup predicted by pwstud summary
 lm(formula = pwstud ~ instpup, data = mydata)
   mod <- lm(pwstud ~ instpup, data = mydata)
   summary(mod)
-# Residuals:
-#     Min      1Q  Median      3Q     Max 
-# -54.273 -24.332   3.242  25.396  48.099 
-# Coefficients:
-#              Estimate Std. Error t value Pr(>|t|)    
-# (Intercept) 4.058e+01  3.126e+00   12.98   <2e-16 ***
-# instpup     1.355e-03  5.271e-04    2.57   0.0103 *  
 
-  
-  
 # INSTPUP summary  
 summary(mydata$instpup)
-#   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
-#   2273    4860    5405    5722    6182   16698      89 
-
 
 # Controlled Regressions
 lm(formula = instpup ~ pbstud + phstud + pwstud + enroll + stear + lowinc, data = mydata)
   mod <- lm(instpup ~ pbstud + phstud + pwstud + enroll + stear + lowinc, data = mydata)
   summary(mod)
-
-# Call:
-# lm(formula = instpup ~ pbstud + phstud + pwstud + enroll + stear + 
-#     lowinc, data = mydata)
-
-# Coefficients:
-# (Intercept)       pbstud       phstud       pwstud       enroll        stear       lowinc  
-#   9.579e+03    4.160e+00    7.242e+00   -8.608e-01    1.832e-03   -3.427e+02    3.180e+00  
-
-# Call:
-# lm(formula = instpup ~ pbstud + phstud + pwstud + enroll + stear + 
-#     lowinc, data = mydata)
-
-# Residuals:
-#     Min      1Q  Median      3Q     Max 
-# -3781.6  -577.8  -200.6   256.6  8287.0 
-
-# Coefficients:
-#               Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)  9.579e+03  8.467e+02  11.314   <2e-16 ***
-# pbstud       4.160e+00  9.331e+00   0.446    0.656    
-# phstud       7.242e+00  8.724e+00   0.830    0.407    
-# pwstud      -8.608e-01  8.723e+00  -0.099    0.921    
-# enroll       1.832e-03  2.958e-03   0.619    0.536    
-# stear       -3.427e+02  1.246e+01 -27.504   <2e-16 ***
-# lowinc       3.180e+00  2.427e+00   1.310    0.190    
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-# Residual standard error: 1190 on 1216 degrees of freedom
-#   (90 observations deleted due to missingness)
-# Multiple R-squared:  0.4191,	Adjusted R-squared:  0.4162 
-# F-statistic: 146.2 on 6 and 1216 DF,  p-value: < 2.2e-16
-
-
   
-lm(formula = instpup ~ phstud + pbstud + pwstud + enroll + stear + lowinc, data = mydata)
-  mod <- lm(instpup ~ phstud + pbstud + pwstud + enroll + stear + lowinc, data = mydata)
-  summary(mod)
-
-# Call:
-# lm(formula = instpup ~ phstud + pbstud + pwstud + enroll + stear + 
-#    lowinc, data = mydata)
-
-# Coefficients:
-# (Intercept)       phstud       pbstud       pwstud       enroll        stear       lowinc  
-#   9.579e+03    7.242e+00    4.160e+00   -8.608e-01    1.832e-03   -3.427e+02    3.180e+00  
-
-
-# Call:
-# lm(formula = instpup ~ phstud + pbstud + pwstud + enroll + stear + 
-#     lowinc, data = mydata)
-
-# Residuals:
-#     Min      1Q  Median      3Q     Max 
-# -3781.6  -577.8  -200.6   256.6  8287.0 
-
-# Coefficients:
-#               Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)  9.579e+03  8.467e+02  11.314   <2e-16 ***
-# phstud       7.242e+00  8.724e+00   0.830    0.407    
-# pbstud       4.160e+00  9.331e+00   0.446    0.656    
-# pwstud      -8.608e-01  8.723e+00  -0.099    0.921    
-# enroll       1.832e-03  2.958e-03   0.619    0.536    
-# stear       -3.427e+02  1.246e+01 -27.504   <2e-16 ***
-# lowinc       3.180e+00  2.427e+00   1.310    0.190    
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-# Residual standard error: 1190 on 1216 degrees of freedom
-#   (90 observations deleted due to missingness)
-# Multiple R-squared:  0.4191,	Adjusted R-squared:  0.4162 
-# F-statistic: 146.2 on 6 and 1216 DF,  p-value: < 2.2e-16
-
-  
-
-lm(formula = instpup ~ pwstud + pbstud + phstud + enroll + stear + lowinc, data = mydata)
-  mod <- lm(instpup ~ pwstud + pbstud + phstud + enroll + stear + lowinc, data = mydata)
-  summary(mod)
-
-#   Call:
-# lm(formula = instpup ~ pwstud + pbstud + phstud + enroll + stear + 
-#     lowinc, data = mydata)
-
-# Coefficients:
-# (Intercept)       pwstud       pbstud       phstud       enroll        stear       lowinc  
-#   9.579e+03   -8.608e-01    4.160e+00    7.242e+00    1.832e-03   -3.427e+02    3.180e+00  
-
-
-# Call:
-# lm(formula = instpup ~ pwstud + pbstud + phstud + enroll + stear + 
-#    lowinc, data = mydata)
-
-# Residuals:
-#     Min      1Q  Median      3Q     Max 
-# -3781.6  -577.8  -200.6   256.6  8287.0 
-
-# Coefficients:
-#               Estimate Std. Error t value Pr(>|t|)    
-# (Intercept)  9.579e+03  8.467e+02  11.314   <2e-16 ***
-# pwstud      -8.608e-01  8.723e+00  -0.099    0.921    
-# pbstud       4.160e+00  9.331e+00   0.446    0.656    
-# phstud       7.242e+00  8.724e+00   0.830    0.407    
-# enroll       1.832e-03  2.958e-03   0.619    0.536    
-# stear       -3.427e+02  1.246e+01 -27.504   <2e-16 ***
-# lowinc       3.180e+00  2.427e+00   1.310    0.190    
-# ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
-
-# Residual standard error: 1190 on 1216 degrees of freedom
-#   (90 observations deleted due to missingness)
-# Multiple R-squared:  0.4191,	Adjusted R-squared:  0.4162 
-# F-statistic: 146.2 on 6 and 1216 DF,  p-value: < 2.2e-16
 
 ```
 hist(log(mydata$instpup))
